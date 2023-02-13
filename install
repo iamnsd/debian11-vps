@@ -1,0 +1,81 @@
+===================================
+	1 Обновление системы
+===================================
+
+passwd
+apt update
+apt upgrade -y
+reboot
+hostnamectl set-hostname srv-m-node1
+
+===================================
+	2 Генерация ключей SSH
+===================================
+
+
+
+===================================
+	3 Конфигурирование sudo
+===================================
+
+useradd -m morza -s /bin/bash
+passwd morza
+apt install sudo -y
+usermod -aG sudo morza
+su – morza
+sudo apt update
+
+
+===================================
+	3 Отключение доступа root по SSH
+===================================
+
+sudo sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
+sudo systemctl reload ssh
+
+
+===================================
+	4 Firewall
+===================================
+
+sudo apt install -y ufw
+sudo ufw status
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw app list
+sudo ufw allow ssh
+sudo ufw enable
+
+
+===================================
+	5 Базовый софт
+===================================
+
+sudo apt install vim screen htop -y
+
+
+===================================
+	6 Docker
+===================================
+
+sudo apt install ca-certificates curl gnupg lsb-release
+sudo mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo docker run hello-world
+
+===================================
+	6 Nginx container
+===================================
+
+sudo docker pull nginx
+sudo mkdir /opt/under-construction-nginx
+sudo docker run --name under-construction-nginx -p 80:80 -v /opt/under-construction-nginx:/usr/share/nginx/html:ro -d nginx
