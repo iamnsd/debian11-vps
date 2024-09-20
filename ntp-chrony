@@ -1,0 +1,35 @@
+Для настройки NTP-клиента на Debian, можно использовать пакет chrony, который часто рекомендуют в качестве замены устаревшему ntpd. Вот шаги для его настройки:
+
+Установите chrony:
+
+sudo apt update
+sudo apt install chrony
+
+Откройте файл конфигурации chrony:
+
+sudo nano /etc/chrony/chrony.conf
+Найдите строку, где указаны серверы NTP (например, pool), и при необходимости добавьте или измените NTP-сервера. Пример:
+
+pool 0.debian.pool.ntp.org iburst
+pool 1.debian.pool.ntp.org iburst
+pool 2.debian.pool.ntp.org iburst
+pool 3.debian.pool.ntp.org iburst
+
+Перезапустите сервис для применения изменений:
+
+sudo systemctl restart chrony
+
+Убедитесь, что сервис запущен и работает:
+
+sudo systemctl status chrony
+
+Чтобы проверить синхронизацию времени, выполните команду:
+
+chronyc sources
+Эта команда покажет, с какими NTP-серверами подключен клиент, и его статус синхронизации.
+
+Для автоматического старта chrony при загрузке системы:
+
+sudo systemctl enable chrony
+
+После этих шагов ваш Debian будет корректно синхронизировать время с NTP-серверами.
